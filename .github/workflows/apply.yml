@@ -43,7 +43,7 @@ jobs:
       TF_VAR_client_secrets: ${{ secrets.CLIENT_SECRETS_JSON }}
     steps:
       - uses: actions/checkout@v5
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
