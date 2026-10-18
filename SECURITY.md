@@ -18,7 +18,7 @@ Respons awal maksimal 1 hari kerja (realm production: segera).
    - Production wajib remote backend terenkripsi + locking (lihat `backend.tf`).
 3. **Scanning konfigurasi.** `trivy config` (IaC) + `tflint` + CodeQL-like policy
    tests berjalan di CI; temuan HIGH/CRITICAL memblokir merge.
-4. **Audit.** Realm mencatat seluruh admin & user event
-   (`admin_events_enabled`) — dasar review akses kuartalan.
+4. **Audit.** Realm mencatat seluruh admin & user event (bawaan Keycloak 26,
+   tanpa switch `admin_events_enabled` lagi) — dasar review akses kuartalan.
 5. **Rotasi.** Secret client maksimal 90 hari; kredensial admin mengikuti
    kebijakan break-glass di [docs/ADMIN-ACCESS.md](docs/ADMIN-ACCESS.md).
