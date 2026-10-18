@@ -39,7 +39,7 @@ jobs:
         run: terraform fmt -check -recursive terraform
       - name: Init + validate semua environment & modul
         run: bash scripts/validate-terraform.sh
-      - uses: terraform-linters/setup-tflint@v4
+      - uses: terraform-linters/setup-tflint@v6
         with:
           tflint_version: latest
       - name: tflint
