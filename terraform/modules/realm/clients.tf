@@ -1,9 +1,9 @@
 locals {
   clients      = { for c in var.clients : c.clientId => c }
   public_types = ["public-spa", "mobile"]
-  api_clients  = { for k, c in local.clients : k => c if c.audience != null }
   # Satu scope per audience distinct — beberapa client boleh berbagi audience
-  # (mis. billing-api & test-harness), scope tetap satu resource.
+  # (mis. billing-api & test-harness), scope DAN mapper tetap satu resource.
+  # (Mapper per-client pernah dibuat dan memicu 409 race pada scope bersama.)
   audiences = toset([for c in local.clients : c.audience if c.audience != null])
 }
 
@@ -55,12 +55,12 @@ resource "keycloak_openid_client_scope" "api_scope" {
 }
 
 resource "keycloak_openid_audience_protocol_mapper" "audience" {
-  for_each = local.api_clients
+  for_each = local.audiences
 
   realm_id                 = keycloak_realm.realm.id
-  client_scope_id          = keycloak_openid_client_scope.api_scope[each.value.audience].id
+  client_scope_id          = keycloak_openid_client_scope.api_scope[each.value].id
   name                     = "audience-mapper"
-  included_custom_audience = each.value.audience
+  included_custom_audience = each.value
 }
 
 resource "keycloak_openid_client_default_scopes" "client" {
