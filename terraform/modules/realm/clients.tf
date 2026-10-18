@@ -2,6 +2,9 @@ locals {
   clients      = { for c in var.clients : c.clientId => c }
   public_types = ["public-spa", "mobile"]
   api_clients  = { for k, c in local.clients : k => c if c.audience != null }
+  # Satu scope per audience distinct — beberapa client boleh berbagi audience
+  # (mis. billing-api & test-harness), scope tetap satu resource.
+  audiences = toset([for c in local.clients : c.audience if c.audience != null])
 }
 
 resource "keycloak_openid_client" "client" {
@@ -43,11 +46,11 @@ resource "keycloak_openid_client" "client" {
 }
 
 resource "keycloak_openid_client_scope" "api_scope" {
-  for_each = local.api_clients
+  for_each = local.audiences
 
   realm_id               = keycloak_realm.realm.id
-  name                   = each.value.audience
-  description            = "Scope API untuk ${each.key} (audience: ${each.value.audience})"
+  name                   = each.value
+  description            = "Scope API (audience: ${each.value})"
   include_in_token_scope = true
 }
 
@@ -55,7 +58,7 @@ resource "keycloak_openid_audience_protocol_mapper" "audience" {
   for_each = local.api_clients
 
   realm_id                 = keycloak_realm.realm.id
-  client_scope_id          = keycloak_openid_client_scope.api_scope[each.key].id
+  client_scope_id          = keycloak_openid_client_scope.api_scope[each.value.audience].id
   name                     = "audience-mapper"
   included_custom_audience = each.value.audience
 }
@@ -67,10 +70,9 @@ resource "keycloak_openid_client_default_scopes" "client" {
   client_id = keycloak_openid_client.client[each.key].id
 
   # Referensi lewat resource (bukan string) agar scope API dibuat TERLEBIH
-  # DAHULU — jika tidak, Keycloak auto-membuat scope dengan nama sama saat
-  # default scope di-assign, lalu pembuatan resource scope kena 409 Conflict.
+  # DAHULU — assignment by-name bisa memicu auto-create/409 pada provider.
   default_scopes = distinct(concat(
     ["profile", "email", "roles", "web-origins", "acr"],
-    each.value.audience != null ? [keycloak_openid_client_scope.api_scope[each.key].name] : []
+    each.value.audience != null ? [keycloak_openid_client_scope.api_scope[each.value.audience].name] : []
   ))
 }
