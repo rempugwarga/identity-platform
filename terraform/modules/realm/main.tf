@@ -39,6 +39,11 @@ resource "keycloak_realm" "realm" {
     type              = "totp"
   }
 
+  # Metadata environment (mempermudah audit lintas environment di Admin Console).
+  attributes = {
+    environment = var.environment
+  }
+
   # Audit trail (dasar review akses kuartalan): sejak Keycloak 26, event user
   # dan admin selalu dicatat. Provider keycloak v5 menghapus switch
   # events_enabled/events_expiration/admin_events_* — retensi & listener diatur

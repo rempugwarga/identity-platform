@@ -66,8 +66,11 @@ resource "keycloak_openid_client_default_scopes" "client" {
   realm_id  = keycloak_realm.realm.id
   client_id = keycloak_openid_client.client[each.key].id
 
+  # Referensi lewat resource (bukan string) agar scope API dibuat TERLEBIH
+  # DAHULU — jika tidak, Keycloak auto-membuat scope dengan nama sama saat
+  # default scope di-assign, lalu pembuatan resource scope kena 409 Conflict.
   default_scopes = distinct(concat(
     ["profile", "email", "roles", "web-origins", "acr"],
-    each.value.audience != null ? [each.value.audience] : []
+    each.value.audience != null ? [keycloak_openid_client_scope.api_scope[each.key].name] : []
   ))
 }
