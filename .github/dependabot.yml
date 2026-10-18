@@ -1,0 +1,61 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+    groups:
+      test-tooling:
+        patterns:
+          - '@rstest/*'
+          - 'ajv*'
+          - 'typescript'
+          - '@types/*'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - ci
+
+  - package-ecosystem: terraform
+    directory: /terraform/modules/realm
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - terraform
+
+  - package-ecosystem: terraform
+    directory: /terraform/envs/dev
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - terraform
+
+  - package-ecosystem: terraform
+    directory: /terraform/envs/staging
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - terraform
+
+  - package-ecosystem: terraform
+    directory: /terraform/envs/prod
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - terraform

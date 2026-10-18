@@ -1,0 +1,66 @@
+name: Apply IAM
+
+# Perubahan konfigurasi IAM hanya diterapkan setelah:
+#   1. CI (policy tests + integration test) lulus -> branch protection
+#   2. dev: otomatis setelah merge ke main
+#   3. staging/prod: approval environment (required reviewers) di GitHub
+on:
+  push:
+    branches: [main]
+    paths:
+      - terraform/**
+      - clients/**
+      - policies/**
+      - scripts/**
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment target
+        type: choice
+        required: true
+        default: staging
+        options: [dev, staging, prod]
+
+concurrency:
+  group: apply-iam-${{ github.event_name == 'push' && 'dev' || inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  apply:
+    name: Terraform apply (${{ github.event_name == 'push' && 'dev' || inputs.environment }})
+    runs-on: ubuntu-latest
+    environment: iam-${{ github.event_name == 'push' && 'dev' || inputs.environment }}
+    env:
+      TARGET_ENV: ${{ github.event_name == 'push' && 'dev' || inputs.environment }}
+      # Secret disuntikkan dari GitHub Environment (iam-dev/iam-staging/iam-prod).
+      # Tidak ada kredensial yang disimpan di repository.
+      TF_VAR_keycloak_url: ${{ secrets.KC_URL }}
+      TF_VAR_keycloak_admin_username: ${{ secrets.KC_ADMIN_USERNAME }}
+      TF_VAR_keycloak_admin_password: ${{ secrets.KC_ADMIN_PASSWORD }}
+      TF_VAR_client_secrets: ${{ secrets.CLIENT_SECRETS_JSON }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Gerbang terakhir — jalankan policy tests
+        run: |
+          bun install --frozen-lockfile
+          bun run test
+
+      - name: Terraform init
+        run: terraform -chdir="terraform/envs/${TARGET_ENV}" init -input=false
+
+      - name: Terraform plan
+        run: terraform -chdir="terraform/envs/${TARGET_ENV}" plan -input=false -out=tfplan
+
+      - name: Terraform apply
+        run: terraform -chdir="terraform/envs/${TARGET_ENV}" apply -input=false tfplan
+
+      - name: Tampilkan endpoint efektif
+        run: terraform -chdir="terraform/envs/${TARGET_ENV}" output oidc_endpoints

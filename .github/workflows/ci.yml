@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  policy-tests:
+    name: Policy Tests (client & token)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Uji kebijakan registrasi client & token
+        run: bun run test
+
+  terraform-checks:
+    name: Terraform fmt/validate/tflint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - name: Format check
+        run: terraform fmt -check -recursive terraform
+      - name: Init + validate semua environment & modul
+        run: bash scripts/validate-terraform.sh
+      - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+      - name: tflint
+        working-directory: terraform
+        run: |
+          tflint --init
+          tflint --recursive
+
+  iac-security:
+    name: Security Scan (gitleaks + trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Secret scanning (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Misconfiguration scanning (trivy, IaC)
+        run: |
+          docker run --rm -v "$PWD":/src aquasec/trivy:latest \
+            config --severity HIGH,CRITICAL --exit-code 1 /src/terraform
+
+  realm-integration:
+    name: Realm Integration Test (ephemeral Keycloak)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - name: Apply ke realm ephemeral + verifikasi kontrak OIDC
+        run: bash scripts/integration-test.sh

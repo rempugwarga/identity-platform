@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "effectiveDate": "2026-10-01",
+  "accessTokenLifespanSeconds": 300,
+  "ssoSessionIdleTimeoutSeconds": 1800,
+  "ssoSessionMaxLifespanSeconds": 36000,
+  "offlineSessionIdleTimeoutSeconds": 1800,
+  "refreshTokenMaxReuse": 0,
+  "revokeRefreshToken": true,
+  "allowedScopes": [
+    "openid",
+    "profile",
+    "email",
+    "roles",
+    "offline_access",
+    "billing-api",
+    "dashboard-api"
+  ],
+  "allowedAudiences": ["billing-api", "dashboard-api"],
+  "allowedEnvironments": ["dev", "staging", "prod"],
+  "publicClientRequiresPkce": true
+}

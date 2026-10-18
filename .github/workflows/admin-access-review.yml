@@ -1,0 +1,60 @@
+name: Admin Access Review
+
+# Pengingat kuartalan review akses Admin Console (prinsip akses berbasis
+# kebutuhan). Membuat issue berisi checklist review; hindari duplikasi bila
+# issue review sebelumnya masih terbuka.
+
+on:
+  schedule:
+    # Awal kuartal: 1 Jan, 1 Apr, 1 Jul, 1 Okt pukul 09:00 UTC.
+    - cron: "0 9 1 1,4,7,10 *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  review:
+    name: Buka issue review akses
+    runs-on: ubuntu-latest
+    steps:
+      - name: Buat issue review kuartalan
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const label = 'access-review';
+            const openReviews = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: label,
+              state: 'open',
+            });
+            if (openReviews.data.length > 0) {
+              core.info('Issue review akses masih terbuka — lewati pembuatan issue baru.');
+              return;
+            }
+
+            const now = new Date();
+            const quarter = Math.floor(now.getUTCMonth() / 3) + 1;
+            const title = `Review akses Admin Console Q${quarter} ${now.getUTCFullYear()}`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              labels: [label, 'iam', 'security'],
+              body: [
+                'Review kuartalan akses Admin Console Keycloak (lihat `docs/ADMIN-ACCESS.md`).',
+                '',
+                '## Checklist',
+                '- [ ] Bandingkan anggota group `platform-admins` dan `auditors` dengan kebutuhan nyata (prinsip need-to-know).',
+                '- [ ] Konfirmasi MFA (TOTP) aktif untuk semua pemegang akses admin.',
+                '- [ ] Tinjau admin events 3 bulan terakhir: ada aktivitas di luar pipeline/PR?',
+                '- [ ] Cabut akses yang tidak lagi diperlukan (dan hapus akun master realm yang kedaluwarsa).',
+                '- [ ] Konfirmasi jumlah pemegang break-glass maksimal 2 orang dan prosedur four-eyes masih dipatuhi.',
+                '- [ ] Bila ada perubahan prosedur: perbarui `docs/ADMIN-ACCESS.md` + `platform-docs/docs/security/admin-console-access.md`.',
+                '',
+                'Tutup issue ini setelah seluruh checklist selesai dan hasilnya dicatat.',
+              ].join('\n'),
+            });

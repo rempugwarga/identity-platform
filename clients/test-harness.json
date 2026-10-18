@@ -1,0 +1,11 @@
+{
+  "clientId": "test-harness",
+  "name": "Test Harness",
+  "description": "Client khusus pipeline integrasi realm (hanya dev; dipakai scripts/integration-test.sh)",
+  "owner": "identity-platform",
+  "type": "service",
+  "environments": ["dev"],
+  "scopes": ["billing-api"],
+  "audience": "billing-api",
+  "allowedClockSkewSeconds": 0
+}

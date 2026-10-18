@@ -1,0 +1,27 @@
+{
+  "clientId": "web-dashboard",
+  "name": "Web Dashboard",
+  "description": "SPA internal untuk operasional; login pengguna memakai Authorization Code + PKCE",
+  "owner": "team-web-dashboard",
+  "type": "public-spa",
+  "environments": ["dev", "staging", "prod"],
+  "redirectUris": [
+    "https://dashboard.rempugwarga.example/callback",
+    "https://dashboard-staging.rempugwarga.example/callback",
+    "http://localhost:5173/callback"
+  ],
+  "postLogoutRedirectUris": [
+    "https://dashboard.rempugwarga.example",
+    "https://dashboard-staging.rempugwarga.example",
+    "http://localhost:5173"
+  ],
+  "webOrigins": [
+    "https://dashboard.rempugwarga.example",
+    "https://dashboard-staging.rempugwarga.example",
+    "http://localhost:5173"
+  ],
+  "scopes": ["openid", "profile", "email", "roles", "dashboard-api"],
+  "audience": "dashboard-api",
+  "pkce": "S256",
+  "allowedClockSkewSeconds": 30
+}

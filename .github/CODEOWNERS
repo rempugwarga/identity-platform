@@ -1,0 +1,15 @@
+# Ownership: Identity Platform Team (@rempugwarga/identity-platform)
+# Repo ini adalah platform service (complicated-subsystem + platform type).
+# Branch protection wajib code owner review (dikelola platform-ci/terraform/org).
+
+*                   @rempugwarga/identity-platform @rempugwarga/platform-engineering
+
+/clients/           @rempugwarga/identity-platform
+/policies/          @rempugwarga/identity-platform
+/terraform/         @rempugwarga/identity-platform
+/scripts/           @rempugwarga/identity-platform
+/tests/             @rempugwarga/identity-platform
+
+/.github/           @rempugwarga/platform-engineering
+/.gitleaks.toml     @rempugwarga/platform-engineering
+/SECURITY.md        @rempugwarga/platform-engineering

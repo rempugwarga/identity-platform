@@ -1,0 +1,29 @@
+{
+  "teams": [
+    {
+      "slug": "platform-engineering",
+      "name": "Platform Engineering",
+      "contact": "#platform-engineering"
+    },
+    {
+      "slug": "identity-platform",
+      "name": "Identity Platform Team",
+      "contact": "#identity-platform"
+    },
+    {
+      "slug": "design-system-team",
+      "name": "Design System Team",
+      "contact": "#platform-design-system"
+    },
+    {
+      "slug": "team-billing",
+      "name": "Tim Billing (stream-aligned)",
+      "contact": "#team-billing"
+    },
+    {
+      "slug": "team-web-dashboard",
+      "name": "Tim Web Dashboard (stream-aligned)",
+      "contact": "#team-web-dashboard"
+    }
+  ]
+}

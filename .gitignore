@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+
+# Environment & secrets (JANGAN pernah menambahkan secret ke repo)
+.env
+.env.*
+!.env.example
+*.tfvars
+*.tfvars.json
+
+# Terraform state (berisi client secret — jangan pernah di-commit)
+.terraform/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+*_override.tf
+
+# Build & tooling
+coverage
+.DS_Store
+*.log

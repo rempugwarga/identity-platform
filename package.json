@@ -1,0 +1,28 @@
+{
+  "name": "@rempugwarga/identity-platform",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Identity platform rempugwarga: konfigurasi Keycloak sebagai kode (Terraform), registrasi client, kebijakan token, dan pengujian kebijakan IAM",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rempugwarga/identity-platform.git"
+  },
+  "scripts": {
+    "test": "rstest run",
+    "test:watch": "rstest --watch",
+    "typecheck": "tsc --noEmit",
+    "new-client": "bun scripts/new-client.ts",
+    "fmt": "terraform -chdir=terraform fmt -recursive",
+    "validate": "bash scripts/validate-terraform.sh",
+    "integration:local": "bash scripts/integration-test.sh"
+  },
+  "packageManager": "bun@1.4.2",
+  "devDependencies": {
+    "@rstest/core": "^0.12.3",
+    "@types/node": "^22.13.9",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.7.3"
+  }
+}

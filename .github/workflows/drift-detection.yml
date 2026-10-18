@@ -1,0 +1,95 @@
+name: Drift Detection
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift-staging:
+    name: Drift check (staging)
+    runs-on: ubuntu-latest
+    environment: iam-staging
+    env:
+      TF_VAR_keycloak_url: ${{ secrets.KC_URL }}
+      TF_VAR_keycloak_admin_username: ${{ secrets.KC_ADMIN_USERNAME }}
+      TF_VAR_keycloak_admin_password: ${{ secrets.KC_ADMIN_PASSWORD }}
+      TF_VAR_client_secrets: ${{ secrets.CLIENT_SECRETS_JSON }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform -chdir=terraform/envs/staging init -input=false
+      - name: Plan (deteksi drift)
+        id: plan
+        shell: bash
+        run: |
+          set +e
+          terraform -chdir=terraform/envs/staging plan -detailed-exitcode -input=false -lock=false
+          code=$?
+          set -e
+          echo "exitcode=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 1 ]; then exit 1; fi
+      - name: Buka issue bila ada drift
+        if: steps.plan.outputs.exitcode == '2'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Drift terdeteksi pada IAM staging',
+              labels: ['drift', 'iam'],
+              body: [
+                'Terraform plan mendeteksi perubahan di luar pipeline (drift) pada realm staging.',
+                '',
+                `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                '',
+                'Tindakan: tinjau plan, tentukan sumber perubahan, lalu rekonsiliasi melalui PR (lebih disukai) atau impor perubahan ke kode.',
+              ].join('\n'),
+            });
+
+  drift-prod:
+    name: Drift check (prod)
+    runs-on: ubuntu-latest
+    environment: iam-prod
+    env:
+      TF_VAR_keycloak_url: ${{ secrets.KC_URL }}
+      TF_VAR_keycloak_admin_username: ${{ secrets.KC_ADMIN_USERNAME }}
+      TF_VAR_keycloak_admin_password: ${{ secrets.KC_ADMIN_PASSWORD }}
+      TF_VAR_client_secrets: ${{ secrets.CLIENT_SECRETS_JSON }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform -chdir=terraform/envs/prod init -input=false
+      - name: Plan (deteksi drift)
+        id: plan
+        shell: bash
+        run: |
+          set +e
+          terraform -chdir=terraform/envs/prod plan -detailed-exitcode -input=false -lock=false
+          code=$?
+          set -e
+          echo "exitcode=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -eq 1 ]; then exit 1; fi
+      - name: Buka issue bila ada drift
+        if: steps.plan.outputs.exitcode == '2'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Drift terdeteksi pada IAM production',
+              labels: ['drift', 'iam', 'priority-high'],
+              body: [
+                'Terraform plan mendeteksi perubahan di luar pipeline (drift) pada realm production.',
+                '',
+                `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+                '',
+                'Tindakan: tinjau audit events (Admin Console > Events), identifikasi aktor, lalu rekonsiliasi melalui PR.',
+              ].join('\n'),
+            });

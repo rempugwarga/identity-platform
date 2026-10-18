@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://rempugwarga.example/schemas/client.schema.json",
+  "title": "Registrasi Client OIDC",
+  "description": "Satu file = satu client. Diajukan melalui Pull Request ke identity-platform/clients dan divalidasi CI sebelum diterapkan.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "clientId",
+    "name",
+    "description",
+    "owner",
+    "type",
+    "environments"
+  ],
+  "properties": {
+    "clientId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{2,63}$",
+      "description": "Huruf kecil, angka, tanda hubung. Harus sama dengan nama file."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 240
+    },
+    "owner": {
+      "type": "string",
+      "description": "Slug tim dari governance/teams.json"
+    },
+    "type": {
+      "enum": ["public-spa", "mobile", "service", "confidential-web"]
+    },
+    "environments": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["dev", "staging", "prod"] }
+    },
+    "redirectUris": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "format": "uri" }
+    },
+    "postLogoutRedirectUris": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "format": "uri" }
+    },
+    "webOrigins": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "scopes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "audience": {
+      "type": "string",
+      "description": "Nama audience yang dipetakan ke access token (wajib untuk type service)"
+    },
+    "pkce": {
+      "enum": ["S256", "none"],
+      "description": "Wajib S256 untuk public-spa dan mobile"
+    },
+    "allowedClockSkewSeconds": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 300
+    }
+  }
+}

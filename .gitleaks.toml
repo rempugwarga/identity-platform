@@ -1,0 +1,13 @@
+# Kebijakan secret scanning (gitleaks) untuk repo identity-platform.
+# Aturan: TIDAK ADA secret di repository. Kredensial disuntikkan dari
+# GitHub Environment / secret manager saat deploy.
+title = "rempugwarga identity-platform"
+
+[allowlist]
+description = "Kredensial bootstrap uji yang memang publik untuk container ephemeral"
+paths = [
+  '''scripts/integration-test\.sh''',
+]
+regexes = [
+  '''localhost''',
+]

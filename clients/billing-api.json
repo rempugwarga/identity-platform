@@ -1,0 +1,11 @@
+{
+  "clientId": "billing-api",
+  "name": "Billing API",
+  "description": "Service-to-service API untuk domain billing (machine-to-machine, client credentials)",
+  "owner": "team-billing",
+  "type": "service",
+  "environments": ["dev", "staging", "prod"],
+  "scopes": ["billing-api"],
+  "audience": "billing-api",
+  "allowedClockSkewSeconds": 30
+}
