@@ -42,7 +42,7 @@ jobs:
       TF_VAR_keycloak_admin_password: ${{ secrets.KC_ADMIN_PASSWORD }}
       TF_VAR_client_secrets: ${{ secrets.CLIENT_SECRETS_JSON }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v4
       - uses: oven-sh/setup-bun@v2
         with:
