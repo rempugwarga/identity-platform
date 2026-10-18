@@ -111,10 +111,16 @@ missingPkceUrl.search = new URLSearchParams({
   state: 'test-state',
 }).toString();
 const missingPkceRes = await fetch(missingPkceUrl, { redirect: 'manual' });
+const missingPkceLocation = missingPkceRes.headers.get('location') ?? '';
+// Keycloak merespons 302 ke redirect_uri terdaftar dengan error=invalid_request
+// saat PKCE hilang (400 hanya untuk client/redirect_uri tak valid).
 check(
   'authorization tanpa code_challenge ditolak (PKCE wajib)',
-  missingPkceRes.status === 400,
-  `HTTP ${missingPkceRes.status}`,
+  missingPkceRes.status === 400 ||
+    (missingPkceRes.status === 302 &&
+      missingPkceLocation.includes('error=invalid_request') &&
+      !/[?&]code=/.test(missingPkceLocation)),
+  `HTTP ${missingPkceRes.status} ${missingPkceLocation}`,
 );
 
 // 4. redirect_uri yang tidak terdaftar ditolak
