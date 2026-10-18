@@ -31,8 +31,9 @@ yang tidak dapat dipenuhi melalui pipeline `identity-platform`.
 
 ## Audit & review
 
-- Realm mencatat semua admin events (`admin_events_enabled` di Terraform) —
-  retensi 7 hari di realm, ekspor mingguan ke sistem log organisasi.
+- Realm mencatat semua admin events (bawaan Keycloak 26; retensi diatur di
+  level realm, bukan lagi lewat Terraform) — ekspor mingguan ke sistem log
+  organisasi.
 - Review akses kuartalan: daftar pemegang akses admin dibandingkan dengan
   kebutuhan; akses yang tidak lagi perlu dicabut.
 - Review **dijadwalkan otomatis** oleh workflow `admin-access-review.yml`

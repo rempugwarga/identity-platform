@@ -54,9 +54,9 @@ resource "keycloak_openid_client_scope" "api_scope" {
 resource "keycloak_openid_audience_protocol_mapper" "audience" {
   for_each = local.api_clients
 
-  realm_id          = keycloak_realm.realm.id
-  client_scope_id   = keycloak_openid_client_scope.api_scope[each.key].id
-  name              = "audience-mapper"
+  realm_id                 = keycloak_realm.realm.id
+  client_scope_id          = keycloak_openid_client_scope.api_scope[each.key].id
+  name                     = "audience-mapper"
   included_custom_audience = each.value.audience
 }
 

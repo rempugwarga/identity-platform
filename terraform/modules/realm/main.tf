@@ -39,9 +39,8 @@ resource "keycloak_realm" "realm" {
     type              = "totp"
   }
 
-  # Audit trail: seluruh event user dan admin dicatat (dasar review akses kuartalan).
-  events_enabled               = true
-  events_expiration            = 604800
-  admin_events_enabled         = true
-  admin_events_details_enabled = true
+  # Audit trail (dasar review akses kuartalan): sejak Keycloak 26, event user
+  # dan admin selalu dicatat. Provider keycloak v5 menghapus switch
+  # events_enabled/events_expiration/admin_events_* — retensi & listener diatur
+  # di level realm Keycloak, bukan lagi lewat Terraform.
 }
