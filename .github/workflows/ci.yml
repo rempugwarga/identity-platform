@@ -19,7 +19,7 @@ jobs:
     name: Policy Tests (client & token)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
@@ -33,7 +33,7 @@ jobs:
     name: Terraform fmt/validate/tflint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v4
       - name: Format check
         run: terraform fmt -check -recursive terraform
@@ -52,7 +52,7 @@ jobs:
     name: Security Scan (gitleaks + trivy)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Secret scanning (gitleaks OSS)
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v4
       - name: Apply ke realm ephemeral + verifikasi kontrak OIDC
         run: bash scripts/integration-test.sh
