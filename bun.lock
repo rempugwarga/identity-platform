@@ -5,7 +5,7 @@
     "": {
       "name": "@rempugwarga/identity-platform",
       "devDependencies": {
-        "@rstest/core": "^0.12.3",
+        "@rstest/core": "^0.12.4",
         "@types/node": "^26.6.5",
         "ajv": "^8.17.1",
         "ajv-formats": "^3.0.1",
@@ -56,7 +56,7 @@
 
     "@rspack/core": ["@rspack/core@2.2.9", "", { "dependencies": { "@rspack/binding": "2.2.9" }, "peerDependencies": { "@module-federation/runtime-tools": "^0.24.1 || ^2.0.0", "@swc/helpers": "^0.5.23" }, "optionalPeers": ["@module-federation/runtime-tools", "@swc/helpers"] }, "sha512-Tp6/ZdM5UrGB3BeLfvh69l1iX03PZ46IgXjKqubVEuJVAhnOjpshooH/YAxcxR0AymcBLKA997Z4v+LV2aXzCw=="],
 
-    "@rstest/core": ["@rstest/core@0.12.3", "", { "dependencies": { "@rsbuild/core": "~2.2.11", "@types/chai": "^5.2.3", "cjs-module-lexer": "^2.2.1" }, "peerDependencies": { "happy-dom": "^20.8.3", "jsdom": ">=15.0.0" }, "optionalPeers": ["happy-dom", "jsdom"], "bin": { "rstest": "./bin/rstest.js" } }, "sha512-l548qraJA1ymaSRhftgl++HtRf4E5l0Hm8YbzcsrH0t8XIOSpAiXyhgJpeHuyM50fKcNkt1nnS532Y7QV1iwcQ=="],
+    "@rstest/core": ["@rstest/core@0.12.4", "", { "dependencies": { "@rsbuild/core": "~2.2.13", "@types/chai": "^5.2.3", "cjs-module-lexer": "^2.3.0" }, "peerDependencies": { "happy-dom": "^20.8.3", "jsdom": ">=15.0.0" }, "optionalPeers": ["happy-dom", "jsdom"], "bin": { "rstest": "./bin/rstest.js" } }, "sha512-NL+lxZ6GiJkL2BYgUR8WU2awQr71GiIzG0rDNKljvhEhmIX61YUoG6qjvLlEFJsvmB/AZmKIYwP/PyFTHZZy1A=="],
 
     "@swc/helpers": ["@swc/helpers@0.5.23", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw=="],
 
